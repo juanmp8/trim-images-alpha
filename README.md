@@ -92,27 +92,27 @@ python trim_png_alpha.py "planta.png"
 
 #### 2. Processar todos os PNGs em uma pasta
 ```bash
-python trim_png_alpha.py "./plants"
+python trim_png_alpha.py "./images"
 ```
 
 #### 3. Processar recursivamente com padding
 ```bash
-python trim_png_alpha.py "./plants" --recursive --padding 8
+python trim_png_alpha.py "./images" --recursive --padding 8
 ```
 
 #### 4. Especificar diretório de saída
 ```bash
-python trim_png_alpha.py "./plants" --out "./recortadas"
+python trim_png_alpha.py "./images" --out "./recortadas"
 ```
 
 #### 5. Simular processamento (dry-run)
 ```bash
-python trim_png_alpha.py "./plants" --recursive --dry-run
+python trim_png_alpha.py "./images" --recursive --dry-run
 ```
 
 #### 6. Preservar estrutura de diretórios
 ```bash
-python trim_png_alpha.py "./plants" --recursive --keep-structure
+python trim_png_alpha.py "./images" --recursive --keep-structure
 ```
 
 ### Opções Disponíveis
