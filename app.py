@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
+from tkinterdnd2 import TkinterDnD, DND_FILES
 
 from trim_png_alpha import trim_image
 
@@ -15,9 +16,11 @@ ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
 
 
-class TrimApp(ctk.CTk):
+class TrimApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         super().__init__()
+        self.TkdndVersion = TkinterDnD._require(self)
+
         self.title("Trim Images PNG")
         self.geometry("820x660")
         self.minsize(640, 500)
@@ -71,10 +74,17 @@ class TrimApp(ctk.CTk):
 
         self._empty_lbl = ctk.CTkLabel(
             self._file_list,
-            text="Nenhuma imagem adicionada.\nClique em  + Adicionar  para selecionar arquivos PNG.",
+            text="Nenhuma imagem adicionada.\nClique em  + Adicionar  ou arraste arquivos PNG aqui.",
             text_color="gray", justify="center",
         )
         self._empty_lbl.grid(row=0, column=0, pady=36)
+
+        # Drag-and-drop registered on the root window so it works in any window state
+        # (maximized, normal). Visual feedback still targets the file list border.
+        self.drop_target_register(DND_FILES)
+        self.dnd_bind("<<DragEnter>>", self._on_drag_enter)
+        self.dnd_bind("<<DragLeave>>", self._on_drag_leave)
+        self.dnd_bind("<<Drop>>", self._on_drop)
 
         # Settings row (padding slider)
         cfg = ctk.CTkFrame(self)
@@ -123,6 +133,24 @@ class TrimApp(ctk.CTk):
         self._log.grid(row=8, column=0, sticky="ew", padx=16, pady=(2, 16))
 
     # ── Event handlers ────────────────────────────────────────────
+
+    def _on_drag_enter(self, event):
+        self._file_list.configure(border_color="#1f6aa5", border_width=2)
+
+    def _on_drag_leave(self, event):
+        self._file_list.configure(border_width=0)
+
+    def _on_drop(self, event):
+        self._on_drag_leave(event)
+        added = 0
+        for f in self.tk.splitlist(event.data):
+            p = Path(f)
+            if p.suffix.lower() == ".png" and p not in self._files:
+                self._files.append(p)
+                self._append_row(p)
+                added += 1
+        if added:
+            self._empty_lbl.grid_remove()
 
     def _on_slider(self, v):
         self._pad_lbl.configure(text=f"  {int(v)} px")

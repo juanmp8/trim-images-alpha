@@ -15,6 +15,7 @@ echo [2/3] Compilando com PyInstaller...
   --windowed ^
   --name "TrimImages" ^
   --collect-all customtkinter ^
+  --collect-all tkinterdnd2 ^
   app.py
 echo.
 
